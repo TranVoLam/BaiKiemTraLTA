@@ -1,12 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
     namespace = "deso1.tranvolam.dlu_21a100100194"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "deso1.tranvolam.dlu_21a100100194"
@@ -60,7 +60,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.room.runtime)
-    ksp(libs.androidx.room.compiler)
+    ksp(libs.room.ksp)
+    implementation(libs.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,6 +74,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.ui.text)
     implementation(platform(libs.androidx.compose.bom.v20230800))
-    implementation("androidx.compose.material3:material3:1.2.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation(libs.material3)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 }

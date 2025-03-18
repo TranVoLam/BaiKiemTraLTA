@@ -1,5 +1,6 @@
 package deso1.tranvolam.dlu_21a100100194
 
+import FoodViewModelFactory
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -56,14 +57,18 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.IconButton
 import androidx.lifecycle.viewmodel.compose.viewModel
-
+import deso1.tranvolam.dlu_21a100100194.data.database.AppDatabase
+import deso1.tranvolam.dlu_21a100100194.repository.FoodRepository
+import androidx.compose.ui.text.TextStyle
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val viewModel: FoodViewModel = viewModel()
+            val database = AppDatabase.getDatabase(applicationContext)
+            val repository = FoodRepository(database.FoodDao())
+            val viewModel: FoodViewModel = viewModel(factory = FoodViewModelFactory(repository))
             FoodScreen(viewModel = viewModel)
         }
     }
@@ -77,7 +82,8 @@ fun FoodScreen(viewModel: FoodViewModel) {
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .padding(top = 16.dp),
             contentPadding = PaddingValues(16.dp)
         ) {
             items(foods.size) { index ->
@@ -96,7 +102,7 @@ fun FoodScreen(viewModel: FoodViewModel) {
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(16.dp)
+                .padding(end = 16.dp, bottom = 64.dp)
         ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = "Thêm")
         }
@@ -128,20 +134,20 @@ fun FoodItem(food: Food, onEditClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = rememberAsyncImagePainter(food.imageURL),
             contentDescription = "Food Image",
             modifier = Modifier
-                .size(64.dp)
+                .size(90.dp)
                 .clip(CircleShape)
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(20.dp))
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = food.name, fontWeight = FontWeight.Bold)
-            Text(text = "${food.price} VND", color = Color.Gray)
+            Text(text = food.name, fontWeight = FontWeight.Bold, fontSize = 22.sp)
+            Text(text = "${food.price.toInt()} VND", color = Color.Gray, fontSize = 18.sp)
         }
         IconButton(onClick = onEditClick) {
             Icon(imageVector = Icons.Default.Edit, contentDescription = "Chỉnh sửa")
@@ -181,7 +187,8 @@ fun EditFoodDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Tên món ăn") }
+                    label = { Text("Tên món ăn", fontSize = 18.sp)},
+                    textStyle = TextStyle(fontSize = 18.sp)
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -189,7 +196,8 @@ fun EditFoodDialog(
                 OutlinedTextField(
                     value = price,
                     onValueChange = { price = it },
-                    label = { Text("Giá món ăn") },
+                    label = { Text("Giá món ăn", fontSize = 18.sp) },
+                    textStyle = TextStyle(fontSize = 18.sp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
